@@ -8,7 +8,11 @@ import { auth } from "../../firebase/config";
 import { toast } from "react-toastify";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
-import { SET_ACTIVE_USER,REMOVE_ACTIVE_USER } from "../../redux/slice/authSlice";
+import {
+  SET_ACTIVE_USER,
+  REMOVE_ACTIVE_USER,
+} from "../../redux/slice/authSlice";
+import ShowOnLogin, { ShowOnLogOut } from "../hiddenLink/hiddenLink";
 
 const logo = (
   <div className={styles.logo}>
@@ -43,7 +47,7 @@ const Header = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         if (user.displayName === null) {
-          const u1 = user.email.substring(0,user.email.indexOf("@"));
+          const u1 = user.email.substring(0, user.email.indexOf("@"));
           const uName = u1.charAt(0).toUpperCase() + u1.slice(1);
           setDisplayName(uName);
         } else {
@@ -59,10 +63,10 @@ const Header = () => {
         );
       } else {
         setDisplayName("");
-        dispatch(REMOVE_ACTIVE_USER())
+        dispatch(REMOVE_ACTIVE_USER());
       }
     });
-  }, [dispatch,displayName]);
+  }, [dispatch, displayName]);
 
   const toggleMenu = () => {
     setShowMenu(!showMenu);
@@ -120,20 +124,27 @@ const Header = () => {
             </ul>
             <div className={styles["header-right"]} onClick={hideMenu}>
               <span className={styles.links}>
-                <NavLink className={activeLink} to="/login">
-                  Login
-                </NavLink>
-                <a href="###">
-                  <FaUserCircle size={16} />
-                  Hi, {displayName}
-                </a>
-                <NavLink className={activeLink} to="/register">
-                  Register
-                </NavLink>
-                <NavLink className={activeLink} to="/order-history">
-                  My Orders
-                </NavLink>
-                <NavLink onClick={logoutUser}>Logout</NavLink>
+                <ShowOnLogOut>
+                  <NavLink className={activeLink} to="/login">
+                    Login
+                  </NavLink>
+                </ShowOnLogOut>
+                <ShowOnLogin>
+                  <a href="###" style={{color:"#ff7722"}}>
+                    <FaUserCircle size={16} />
+                    Hi, {displayName}
+                  </a>
+                </ShowOnLogin>
+
+                <ShowOnLogin>
+                  <NavLink className={activeLink} to="/order-history">
+                    My Orders
+                  </NavLink>
+                </ShowOnLogin>
+
+                <ShowOnLogin>
+                  <NavLink onClick={logoutUser}>Logout</NavLink>
+                </ShowOnLogin>
               </span>
               {cart}
             </div>
